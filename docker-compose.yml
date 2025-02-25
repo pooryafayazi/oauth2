@@ -1,0 +1,81 @@
+services:
+  redis:
+    container_name: redis-oauth2
+    image: redis:7.2.4 #7.4.2
+    restart: always
+    ports:
+      - 6379:6379    
+    volumes:
+      - redis_data:/data
+    command: redis-server --save 60 1 --loglevel warning
+  db:
+    container_name: db-oauth2
+    image: postgres:17.2 #17.4
+    volumes:
+      - ./postgres/data:/var/lib/postgresql/data/
+    env_file:
+      - path: ./.env
+    environment:
+      POSTGRES_DB: ${DBPOSTGRES_DB}
+      POSTGRES_USER: ${DBPOSTGRES_USER}
+      POSTGRES_PASSWORD: ${DBPOSTGRES_PASSWORD}
+    expose:
+      - "5432"
+    ports:
+      - "5432:5432"
+    restart: always
+  
+
+  backend:
+    container_name: backend-oauth2
+    build:    
+      context: .
+      dockerfile: ./dockerfiles/dev/django/Dockerfile
+    volumes:
+      - ./core:/usr/src/app
+      # - ./docs:/usr/src/app/files
+    env_file:
+      - ./.env
+    working_dir: /usr/src/app
+    # command: django-admin startproject core .
+    command: python manage.py runserver 0.0.0.0:8000
+    # command: gunicorn core.wsgi --bind 127.0.0.1:8000  --workers=2
+    ports:
+      - "8000:8000"
+    expose:
+      - "8000"   
+    # environment:
+      # - DEBUG=1
+      # - SECRET_KEY=test
+    restart: always
+    depends_on:
+      - db
+      - redis
+  # nginx:
+  #   image: nginx:1.27.3
+  #   volumes:
+  #     - ./nginx.conf:/etc/nginx/conf.d/default.conf
+  #     - ./fullchain.pem:/etc/ssl/certs/fullchain.pem
+  #     - ./privkey.pem:/etc/ssl/private/privkey.pem
+  #   ports:
+  #     - "443:443"
+  #     - "80:80"
+   
+  # worker:
+  #   container_name: worker-oauth2
+  #   build:
+  #     context: .
+  #     dockerfile: ./dockerfiles/dev/django/Dockerfile # ./dockerfiles/dev/django/Dockerfile
+  #   command: celery -A core worker -l INFO
+  #   volumes:
+  #     - ./core:/usr/src/app
+  #   environment:
+  #     - DJANGO_SETTINGS_MODULE=core.settings 
+  #   depends_on:
+  #     - backend
+  #     - redis  
+
+
+volumes:
+  postgres_data:
+  redis_data:

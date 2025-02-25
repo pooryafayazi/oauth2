@@ -169,3 +169,17 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+docs/*
+
+/postgres/data/*
+___*.py
+
+core/appname/management/commands/*
+
+nginx.conf
+
+fullchain.pem
+test1
+oauth2
+privkey.pem
