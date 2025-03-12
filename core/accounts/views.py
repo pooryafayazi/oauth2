@@ -76,5 +76,8 @@ class GoogleAuthViewSet(viewsets.ViewSet):
 
     def save_user_info(self, user_info):
         email = user_info.get('email')
-        user, created = User.objects.get_or_create(email=email)
+        user, created = User.objects.get_or_create(email=email, defaults={
+            'is_verified': True,
+            'type': UserType.costumer.value,
+        })
         return user
