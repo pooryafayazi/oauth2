@@ -13,5 +13,5 @@ urlpatterns = [
     path("jwt/refresh/", TokenRefreshView.as_view(), name="jwt-refresh"),
     path("jwt/verify/", TokenVerifyView.as_view(), name="jwt-verify"),
 
-    path('auth/google/', views.GoogleAuthView.as_view(), name='google-login'),
+    path('accounts/auth/google/', views.GoogleAuthViewSet.as_view({'post': 'create', 'get': 'list',}), name='google-auth'),
 ]
