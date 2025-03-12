@@ -16,6 +16,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = serializers.CustomTokenObtainPairSerializer
 
 
+"""
 def exchange_code_for_token(authorization_code):
     token_url = 'https://oauth2.googleapis.com/token'
     payload = {
@@ -28,7 +29,7 @@ def exchange_code_for_token(authorization_code):
 
     response = requests.post(token_url, data=payload)
     return response.json()
-
+"""
 
 
 def exchange_code_for_token(authorization_code):
